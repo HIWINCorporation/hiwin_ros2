@@ -1,0 +1,26 @@
+moveit_setup_assistant_config:
+  urdf:
+    package: hiwin_description
+    relative_path: urdf/ra.urdf.xacro
+    xacro_args: name:=ra6 ra_type:=ra610_1869
+  srdf:
+    relative_path: config/ra6.srdf
+  package_settings:
+    author_name: hiwin_robot
+    author_email: hiwin_robot@hiwin.tw
+    generated_timestamp: 1728980435
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity
+  modified_urdf:
+    xacros:
+      - control_xacro
+  control_xacro:
+    command:
+      - position
+    state:
+      - position
+      - velocity

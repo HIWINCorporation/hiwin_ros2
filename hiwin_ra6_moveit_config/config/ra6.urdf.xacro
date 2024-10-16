@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ra6">
+
+    <xacro:arg name="initial_positions_file"
+        default="$(find hiwin_ra6_moveit_config)/config/initial_positions.yaml" />
+
+    <!-- Import ra6 urdf file -->
+    <xacro:include filename="$(find hiwin_description)/urdf/ra.urdf.xacro" />
+
+    <!-- Import control_xacro -->
+    <xacro:include filename="$(find hiwin_ra6_moveit_config)/config/ra6.ros2_control.xacro" />
+    <xacro:ra6_ros2_control name="FakeSystem" tf_prefix="$(arg tf_prefix)"
+        initial_positions_file="$(arg initial_positions_file)" />
+
+</robot>
