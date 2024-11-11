@@ -1,0 +1,9 @@
+<library path="hiwin_driver_plugin">
+  <class name="hiwin_driver/HIWINPositionHardwareInterface"
+         type="hiwin_driver::HIWINPositionHardwareInterface"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+		ROS2 Control System Driver for the HIWIN Robots series.
+    </description>
+  </class>
+</library>
