@@ -1,15 +1,31 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ra6">
 
+    <xacro:arg name="tf_prefix" default="" />
     <xacro:arg name="initial_positions_file"
         default="$(find hiwin_ra6_moveit_config)/config/initial_positions.yaml" />
 
     <!-- Import ra6 urdf file -->
+    <xacro:arg name="ra_type" default="ra6x" />
     <xacro:include filename="$(find hiwin_description)/urdf/ra.urdf.xacro" />
 
     <!-- Import control_xacro -->
-    <xacro:include filename="$(find hiwin_ra6_moveit_config)/config/ra6.ros2_control.xacro" />
-    <xacro:ra6_ros2_control name="FakeSystem" tf_prefix="$(arg tf_prefix)"
-        initial_positions_file="$(arg initial_positions_file)" />
+    <xacro:arg name="use_fake_hardware" default="false" />
+    <xacro:arg name="hardware_file" default="ra6.ros2_control.xacro" />
+    <xacro:arg name="robot_ip" default="0.0.0.0" />
+
+    <xacro:property name="hardware" value="$(arg hardware_file)" />
+    <xacro:property name="hardware_name" value="FakeSystem" />
+    <xacro:unless value="$(arg use_fake_hardware)">
+        <xacro:if value="${hardware == 'ra6.ros2_control.xacro'}">
+            <xacro:property name="hardware_name" value="GC2" />
+        </xacro:if>
+    </xacro:unless>
+
+    <xacro:include filename="$(find hiwin_ra6_moveit_config)/config/$(arg hardware_file)" />
+    <xacro:ra6_ros2_control name="${hardware_name}" tf_prefix="$(arg tf_prefix)"
+        initial_positions_file="$(arg initial_positions_file)"
+        use_fake_hardware="$(arg use_fake_hardware)"
+        robot_ip="$(arg robot_ip)" />
 
 </robot>

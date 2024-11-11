@@ -11,17 +11,25 @@ from moveit_configs_utils import MoveItConfigsBuilder
 
 
 def launch_setup():
-    controller_spawner_timeout = LaunchConfiguration("controller_spawner_timeout")
+    ra_type = LaunchConfiguration("ra_type")
+    use_fake_hardware = LaunchConfiguration("use_fake_hardware")
+    robot_ip = LaunchConfiguration("robot_ip")
     launch_rviz = LaunchConfiguration("launch_rviz")
     rviz_config = LaunchConfiguration("rviz_config")
-    ra_type = LaunchConfiguration("ra_type")
+    controller_spawner_timeout = LaunchConfiguration("controller_spawner_timeout")
     tf_prefix = LaunchConfiguration("tf_prefix")
 
     moveit_config = (
         MoveItConfigsBuilder("hiwin_ra6")
         .robot_description(
             file_path="config/ra6.urdf.xacro",
-            mappings={"name": "hiwin", "ra_type": ra_type, "tf_prefix": tf_prefix},
+            mappings={
+                "name": "hiwin",
+                "ra_type": ra_type,
+                "use_fake_hardware": use_fake_hardware,
+                "robot_ip": robot_ip,
+                "tf_prefix": tf_prefix,
+            },
         )
         .robot_description_semantic(Path("config") / "ra6.srdf")
         .robot_description_kinematics(Path("config") / "kinematics.yaml")
@@ -120,17 +128,6 @@ def launch_setup():
 
 def generate_launch_description():
     declared_arguments = []
-
-    declared_arguments.append(
-        DeclareLaunchArgument(
-            "controller_spawner_timeout",
-            default_value="10",
-            description="Timeout used when spawning controllers.",
-        )
-    )
-    declared_arguments.append(
-        DeclareLaunchArgument("launch_rviz", default_value="true", description="Launch RViz?")
-    )
     declared_arguments.append(
         DeclareLaunchArgument(
             "ra_type",
@@ -140,6 +137,30 @@ def generate_launch_description():
                 "ra610_1355",
                 "ra610_1869",
             ],
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "use_fake_hardware",
+            default_value="false",
+            description="Start robot with mock hardware mirroring command to its states.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "robot_ip",
+            default_value="0.0.0.0",
+            description="IP address by which the robot can be reached.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument("launch_rviz", default_value="true", description="Launch RViz?")
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "controller_spawner_timeout",
+            default_value="10",
+            description="Timeout used when spawning controllers.",
         )
     )
     declared_arguments.append(
