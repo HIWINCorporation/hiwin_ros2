@@ -1,0 +1,62 @@
+# Configuration file for SANMOTION PB4D drive
+vendor_id: 0x000001b9
+product_id: 0x00001010
+assign_activate: 0x0300  # DC Synch register
+auto_fault_reset: false  # true = automatic fault reset, false = fault reset on rising edge command interface "reset_fault"
+auto_state_transitions: true
+
+sm:  # Sync Manager
+  - {index: 2, type: output, pdo: rpdo, watchdog: enable}
+  - {index: 3, type: input, pdo: tpdo, watchdog: disable}
+
+sdo:  # sdo data to be transferred at drive startup
+  - {index: 0x1C32, sub_index: 1, type: uint16, value: 2} # Set Sync mode to DC-Mode - Synchron with SYNC0 Event
+  - {index: 0x1C33, sub_index: 1, type: uint16, value: 2} # Set Sync mode to DC-Mode - Synchron with SYNC0 Event
+  - {index: 0x6060, sub_index: 0, type: int8, value: 8} # Set op mode
+  - {index: 0x6860, sub_index: 0, type: int8, value: 8} # Set op mode
+  - {index: 0x7060, sub_index: 0, type: int8, value: 8} # Set op mode
+  - {index: 0x7860, sub_index: 0, type: int8, value: 8} # Set op mode
+
+rpdo:  # RxPDO = receive PDO Mapping
+  - index: 0x1600
+    channels:
+      - {index: 0x6040, sub_index: 0, type: uint16, default: 0}  # Control word
+      - {index: 0x607a, sub_index: 0, type: int32, command_interface: position, default: .nan, factor: 25464.790894703253723021402139602}  # Target position
+      - {index: 0x60ff, sub_index: 0, type: int32, default: 0}  # Target velocity
+  - index: 0x1610
+    channels:
+      - {index: 0x6840, sub_index: 0, type: uint16, default: 0}  # Control word
+      - {index: 0x687a, sub_index: 0, type: int32, command_interface: position, default: .nan, factor: 25464.790894703253723021402139602}  # Target position
+      - {index: 0x68ff, sub_index: 0, type: int32, default: 0}  # Target velocity
+  - index: 0x1620
+    channels:
+      - {index: 0x7040, sub_index: 0, type: uint16, default: 0}  # Control word
+      - {index: 0x707a, sub_index: 0, type: int32, command_interface: position, default: .nan, factor: 25464.790894703253723021402139602}  # Target position
+      - {index: 0x70ff, sub_index: 0, type: int32, default: 0}  # Target velocity
+  - index: 0x1630
+    channels:
+      - {index: 0x7840, sub_index: 0, type: uint16, default: 0}  # Control word
+      - {index: 0x787a, sub_index: 0, type: int32, command_interface: position, default: .nan, factor: 25464.790894703253723021402139602}  # Target position
+      - {index: 0x78ff, sub_index: 0, type: int32, default: 0}  # Target velocity
+
+tpdo:  # TxPDO = transmit PDO Mapping
+  - index: 0x1a00
+    channels:
+      - {index: 0x6041, sub_index: 0, type: uint16}  # Status word
+      - {index: 0x6064, sub_index: 0, type: int32, state_interface: position, factor: 3.9269908169872415480783042290994e-5}  # Position actual value
+      - {index: 0x606c, sub_index: 0, type: int32, state_interface: velocity}  # Velocity actual value
+  - index: 0x1a10
+    channels:
+      - {index: 0x6841, sub_index: 0, type: uint16}  # Status word
+      - {index: 0x6864, sub_index: 0, type: int32, state_interface: position, factor: 3.9269908169872415480783042290994e-5}  # Position actual value
+      - {index: 0x686c, sub_index: 0, type: int32, state_interface: velocity}  # Velocity actual value
+  - index: 0x1a20
+    channels:
+      - {index: 0x7041, sub_index: 0, type: uint16}  # Status word
+      - {index: 0x7064, sub_index: 0, type: int32, state_interface: position, factor: 3.9269908169872415480783042290994e-5}  # Position actual value
+      - {index: 0x706c, sub_index: 0, type: int32, state_interface: velocity}  # Velocity actual value
+  - index: 0x1a30
+    channels:
+      - {index: 0x7841, sub_index: 0, type: uint16}  # Status word
+      - {index: 0x7864, sub_index: 0, type: int32, state_interface: position, factor: 3.9269908169872415480783042290994e-5}  # Position actual value
+      - {index: 0x786c, sub_index: 0, type: int32, state_interface: velocity}  # Velocity actual value

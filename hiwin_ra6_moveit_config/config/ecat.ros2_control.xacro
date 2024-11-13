@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="ecat_ros2_control"
+    params="name tf_prefix control_frequency">
+
+    <xacro:property name="pb4d_config"
+      value="$(find hiwin_driver)/config/SANYO_PB4D_config.yaml" />
+
+    <ros2_control name="ecat" type="system">
+      <hardware>
+        <plugin>ethercat_driver/EthercatDriver</plugin>
+        <param name="master_id">0</param>
+        <param name="control_frequency">${control_frequency}</param>
+      </hardware>
+
+      <joint name="mdp_device">
+        <ec_module name="device_1">
+          <plugin>ethercat_generic_plugins/EcMDPDevice</plugin>
+          <param name="alias">0</param>
+          <param name="position">0</param>
+          <param name="slave_config">${pb4d_config}</param>
+        </ec_module>
+      </joint>
+
+      <joint name="${tf_prefix}joint_1">
+        <command_interface name="position" />
+        <state_interface name="position" />
+        <state_interface name="velocity" />
+        <ec_module name="module_1">
+          <plugin>ethercat_generic_plugins/EcMDPModule</plugin>
+          <param name="alias">0</param>
+          <param name="position">0</param>
+          <param name="axis">1</param>
+          <param name="mode_of_operation">8</param>
+          <param name="slave_config">${pb4d_config}</param>
+        </ec_module>
+      </joint>
+
+      <joint name="${tf_prefix}joint_2">
+        <command_interface name="position" />
+        <state_interface name="position" />
+        <state_interface name="velocity" />
+        <ec_module name="module_2">
+          <plugin>ethercat_generic_plugins/EcMDPModule</plugin>
+          <param name="alias">0</param>
+          <param name="position">0</param>
+          <param name="axis">2</param>
+          <param name="mode_of_operation">8</param>
+          <param name="slave_config">${pb4d_config}</param>
+        </ec_module>
+      </joint>
+
+      <joint name="${tf_prefix}joint_3">
+        <command_interface name="position" />
+        <state_interface name="position" />
+        <state_interface name="velocity" />
+        <ec_module name="module_3">
+          <plugin>ethercat_generic_plugins/EcMDPModule</plugin>
+          <param name="alias">0</param>
+          <param name="position">0</param>
+          <param name="axis">3</param>
+          <param name="mode_of_operation">8</param>
+          <param name="slave_config">${pb4d_config}</param>
+        </ec_module>
+      </joint>
+
+      <joint name="${tf_prefix}joint_4">
+        <command_interface name="position" />
+        <state_interface name="position" />
+        <state_interface name="velocity" />
+        <ec_module name="module_4">
+          <plugin>ethercat_generic_plugins/EcMDPModule</plugin>
+          <param name="alias">0</param>
+          <param name="position">0</param>
+          <param name="axis">4</param>
+          <param name="mode_of_operation">8</param>
+          <param name="slave_config">${pb4d_config}</param>
+        </ec_module>
+      </joint>
+
+    </ros2_control>
+
+    <ros2_control name="fake" type="system">
+      <hardware>
+        <plugin>mock_components/GenericSystem</plugin>
+      </hardware>
+
+      <joint name="${tf_prefix}joint_5">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+      </joint>
+      <joint name="${tf_prefix}joint_6">
+        <command_interface name="position" />
+        <state_interface name="position">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+        <state_interface name="velocity">
+          <param name="initial_value">0.0</param>
+        </state_interface>
+      </joint>
+
+    </ros2_control>
+  </xacro:macro>
+</robot>

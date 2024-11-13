@@ -11,21 +11,34 @@
 
     <!-- Import control_xacro -->
     <xacro:arg name="use_fake_hardware" default="false" />
-    <xacro:arg name="hardware_file" default="ra6.ros2_control.xacro" />
+    <xacro:arg name="cabinet" default="gc2" />
     <xacro:arg name="robot_ip" default="0.0.0.0" />
+    <xacro:arg name="control_frequency" default="1000" />
 
-    <xacro:property name="hardware" value="$(arg hardware_file)" />
+    <xacro:property name="controller" value="$(arg cabinet)" />
     <xacro:property name="hardware_name" value="FakeSystem" />
+    <xacro:property name="hardware_description_file" value="ra6.ros2_control.xacro" />
     <xacro:unless value="$(arg use_fake_hardware)">
-        <xacro:if value="${hardware == 'ra6.ros2_control.xacro'}">
+        <xacro:if value="${controller == 'gc2'}">
             <xacro:property name="hardware_name" value="GC2" />
+        </xacro:if>
+        <xacro:if value="${controller == 'ecat'}">
+            <xacro:property name="hardware_name" value="ECAT" />
+            <xacro:property name="hardware_description_file" value="ecat.ros2_control.xacro" />
         </xacro:if>
     </xacro:unless>
 
-    <xacro:include filename="$(find hiwin_ra6_moveit_config)/config/$(arg hardware_file)" />
-    <xacro:ra6_ros2_control name="${hardware_name}" tf_prefix="$(arg tf_prefix)"
-        initial_positions_file="$(arg initial_positions_file)"
-        use_fake_hardware="$(arg use_fake_hardware)"
-        robot_ip="$(arg robot_ip)" />
+    <xacro:include filename="$(find hiwin_ra6_moveit_config)/config/${hardware_description_file}" />
+    <xacro:if value="${controller == 'gc2'}">
+        <xacro:ra6_ros2_control name="${hardware_name}" tf_prefix="$(arg tf_prefix)"
+            initial_positions_file="$(arg initial_positions_file)"
+            use_fake_hardware="$(arg use_fake_hardware)"
+            robot_ip="$(arg robot_ip)" />
+    </xacro:if>
+    <xacro:if value="${controller == 'ecat'}">
+        <xacro:ecat_ros2_control name="${hardware_name}" tf_prefix="$(arg tf_prefix)"
+            control_frequency="$(arg control_frequency)" />
+    </xacro:if>
+
 
 </robot>

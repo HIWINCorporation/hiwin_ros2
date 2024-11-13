@@ -12,6 +12,8 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <depend>controller_manager</depend>
+  <depend>ethercat_driver</depend>
+  <depend>ethercat_generic_mdp</depend>
   <depend>hiwin_robot_client_library</depend>
   <depend>hardware_interface</depend>
   <depend>pluginlib</depend>

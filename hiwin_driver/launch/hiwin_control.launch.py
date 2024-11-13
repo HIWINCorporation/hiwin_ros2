@@ -12,7 +12,7 @@ def launch_setup():
     ra_type = LaunchConfiguration("ra_type")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     robot_ip = LaunchConfiguration("robot_ip")
-    hardware_file = LaunchConfiguration("hardware_file")
+    cabinet = LaunchConfiguration("cabinet")
     initial_joint_controller = LaunchConfiguration("initial_joint_controller")
     launch_rviz = LaunchConfiguration("launch_rviz")
     rviz_config = LaunchConfiguration("rviz_config")
@@ -36,8 +36,8 @@ def launch_setup():
             "ra_type:=",
             ra_type,
             " ",
-            "hardware_file:=",
-            hardware_file,
+            "cabinet:=",
+            cabinet,
             " ",
             "use_fake_hardware:=",
             use_fake_hardware,
@@ -150,9 +150,9 @@ def generate_launch_description():
     )
     declared_arguments.append(
         DeclareLaunchArgument(
-            "hardware_file",
-            default_value="ra6.ros2_control.xacro",
-            description="ros2_control description file with the robot.",
+            "cabinet",
+            default_value="gc2",
+            description="Robot Control Cabinets from HIWIN.",
         )
     )
     declared_arguments.append(

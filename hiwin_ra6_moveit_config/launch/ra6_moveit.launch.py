@@ -14,6 +14,7 @@ def launch_setup():
     ra_type = LaunchConfiguration("ra_type")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     robot_ip = LaunchConfiguration("robot_ip")
+    cabinet = LaunchConfiguration("cabinet")
     launch_rviz = LaunchConfiguration("launch_rviz")
     rviz_config = LaunchConfiguration("rviz_config")
     controller_spawner_timeout = LaunchConfiguration("controller_spawner_timeout")
@@ -27,6 +28,7 @@ def launch_setup():
                 "name": "hiwin",
                 "ra_type": ra_type,
                 "use_fake_hardware": use_fake_hardware,
+                "cabinet": cabinet,
                 "robot_ip": robot_ip,
                 "tf_prefix": tf_prefix,
             },
@@ -151,6 +153,13 @@ def generate_launch_description():
             "robot_ip",
             default_value="0.0.0.0",
             description="IP address by which the robot can be reached.",
+        )
+    )
+    declared_arguments.append(
+        DeclareLaunchArgument(
+            "cabinet",
+            default_value="gc2",
+            description="Robot Control Cabinets from HIWIN.",
         )
     )
     declared_arguments.append(
