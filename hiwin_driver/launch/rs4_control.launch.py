@@ -9,7 +9,7 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def launch_setup():
-    ra_type = LaunchConfiguration("ra_type")
+    rs_type = LaunchConfiguration("rs_type")
     use_fake_hardware = LaunchConfiguration("use_fake_hardware")
     robot_ip = LaunchConfiguration("robot_ip")
     cabinet = LaunchConfiguration("cabinet")
@@ -24,17 +24,17 @@ def launch_setup():
             " ",
             PathJoinSubstitution(
                 [
-                    FindPackageShare("hiwin_ra6_moveit_config"),
+                    FindPackageShare("hiwin_rs4_moveit_config"),
                     "config",
-                    "ra6.urdf.xacro",
+                    "rs4.urdf.xacro",
                 ]
             ),
             " ",
             "name:=",
-            "ra_type",
+            "rs_type",
             " ",
-            "ra_type:=",
-            ra_type,
+            "rs_type:=",
+            rs_type,
             " ",
             "cabinet:=",
             cabinet,
@@ -49,7 +49,7 @@ def launch_setup():
     robot_description = {"robot_description": robot_description_content}
 
     robot_controllers = PathJoinSubstitution(
-        [FindPackageShare("hiwin_driver"), "config", "hiwin_controllers.yaml"]
+        [FindPackageShare("hiwin_driver"), "config", "rs4_controllers.yaml"]
     )
 
     control_node = Node(
@@ -125,12 +125,10 @@ def generate_launch_description():
     declared_arguments = []
     declared_arguments.append(
         DeclareLaunchArgument(
-            "ra_type",
-            description="Typo/series of used RA robot.",
+            "rs_type",
+            description="Type/series of used RS robot.",
             choices=[
-                "ra605_710",
-                "ra610_1355",
-                "ra610_1869",
+                "rs405_400_200",
             ],
         )
     )
@@ -166,7 +164,6 @@ def generate_launch_description():
             ],
         )
     )
-
     declared_arguments.append(
         DeclareLaunchArgument("launch_rviz", default_value="false", description="Launch RViz?")
     )
