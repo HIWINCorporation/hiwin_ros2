@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ra6">
+
+    <xacro:arg name="tf_prefix" default="" />
+    <xacro:arg name="initial_positions_file"
+        default="$(find hiwin_rs4_moveit_config)/config/initial_positions.yaml" />
+
+    <!-- Import ra6 urdf file -->
+    <xacro:arg name="rs_type" default="rs4x" />
+    <xacro:include filename="$(find hiwin_description)/urdf/rs.urdf.xacro" />
+
+    <!-- Import control_xacro -->
+    <xacro:arg name="use_fake_hardware" default="false" />
+    <xacro:arg name="cabinet" default="gc2" />
+    <xacro:arg name="robot_ip" default="0.0.0.0" />
+    <xacro:arg name="control_frequency" default="1000" />
+
+    <xacro:property name="controller" value="$(arg cabinet)" />
+    <xacro:property name="hardware_name" value="FakeSystem" />
+    <xacro:property name="hardware_description_file" value="rs4.ros2_control.xacro" />
+    <xacro:unless value="$(arg use_fake_hardware)">
+        <xacro:if value="${controller == 'gc2'}">
+            <xacro:property name="hardware_name" value="GC2" />
+        </xacro:if>
+        <xacro:if value="${controller == 'ecat'}">
+            <xacro:property name="hardware_name" value="ECAT" />
+            <xacro:property name="hardware_description_file" value="ecat.ros2_control.xacro" />
+        </xacro:if>
+    </xacro:unless>
+
+    <xacro:include filename="$(find hiwin_rs4_moveit_config)/config/${hardware_description_file}" />
+    <xacro:if value="${controller == 'gc2'}">
+        <xacro:rs4_ros2_control name="${hardware_name}" tf_prefix="$(arg tf_prefix)"
+            initial_positions_file="$(arg initial_positions_file)"
+            use_fake_hardware="$(arg use_fake_hardware)"
+            robot_ip="$(arg robot_ip)" />
+    </xacro:if>
+    <xacro:if value="${controller == 'ecat'}">
+        <xacro:ecat_ros2_control name="${hardware_name}" tf_prefix="$(arg tf_prefix)"
+            control_frequency="$(arg control_frequency)" />
+    </xacro:if>
+
+
+</robot>

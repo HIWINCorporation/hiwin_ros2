@@ -1,0 +1,7 @@
+# Default initial positions for rs4's ros2_control fake system
+
+initial_positions:
+  joint_1: !degrees 45.0
+  joint_2: !degrees -45.0
+  joint_3: !degrees 0
+  joint_4: !degrees 0
