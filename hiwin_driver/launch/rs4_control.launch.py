@@ -93,7 +93,6 @@ def launch_setup():
         arguments=["-d", rviz_config],
     )
 
-    # Delay rviz start after `joint_state_broadcaster`
     delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=joint_state_broadcaster_spawner,
@@ -101,7 +100,6 @@ def launch_setup():
         )
     )
 
-    # Delay start of robot_controller after `joint_state_broadcaster`
     delay_robot_controller_spawner_after_joint_state_broadcaster_spawner = RegisterEventHandler(
         event_handler=OnProcessExit(
             target_action=joint_state_broadcaster_spawner,
@@ -110,11 +108,11 @@ def launch_setup():
     )
 
     nodes_to_start = [
+        robot_state_publisher_node,
         control_node,
         joint_state_broadcaster_spawner,
-        robot_state_publisher_node,
-        delay_rviz_after_joint_state_broadcaster_spawner,
         delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
+        delay_rviz_after_joint_state_broadcaster_spawner,
     ]
 
     return nodes_to_start
@@ -149,7 +147,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "cabinet",
-            default_value="gc2",
+            default_value="rc4-a",
             description="Robot Control Cabinets from HIWIN.",
         )
     )
