@@ -12,7 +12,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "rs_type",
             description="Type/series of used HIWIN robot.",
-            choices=["rs405_400_200"],
+            choices=["rs405_400_200", "rs405_500_400"],
         )
     )
     # General arguments
