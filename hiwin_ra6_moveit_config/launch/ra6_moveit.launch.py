@@ -1,8 +1,9 @@
 from pathlib import Path
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, RegisterEventHandler
 from launch.conditions import IfCondition
+from launch.event_handlers import OnProcessExit
 from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -55,25 +56,34 @@ def launch_setup():
         ],
     )
 
-    # Spawn controllers
-    def controller_spawner(controllers):
-        return Node(
-            package="controller_manager",
-            executable="spawner",
-            arguments=[
-                "--controller-manager",
-                "/controller_manager",
-                "--controller-manager-timeout",
-                controller_spawner_timeout,
-            ]
-            + controllers,
-        )
+    joint_state_broadcaster_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            "joint_state_broadcaster",
+            "--controller-manager",
+            "/controller_manager",
+        ],
+    )
 
-    controllers_active = [
-        "joint_state_broadcaster",
-        "manipulator_controller",
-    ]
-    controller_spawners = [controller_spawner(controllers_active)]
+    robot_controller_spawner = Node(
+        package="controller_manager",
+        executable="spawner",
+        arguments=[
+            "manipulator_controller",
+            "-c",
+            "/controller_manager",
+            "--controller-manager-timeout",
+            controller_spawner_timeout,
+        ],
+    )
+
+    delay_robot_controller_spawner_after_joint_state_broadcaster_spawner = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster_spawner,
+            on_exit=[robot_controller_spawner],
+        )
+    )
 
     # Start the actual move_group node/action server
     move_group_node = Node(
@@ -87,7 +97,7 @@ def launch_setup():
     )
 
     # Publish TF
-    robot_state_publisher = Node(
+    robot_state_publisher_node = Node(
         package="robot_state_publisher",
         executable="robot_state_publisher",
         name="robot_state_publisher",
@@ -118,12 +128,21 @@ def launch_setup():
         ],
     )
 
+    delay_rviz_after_joint_state_broadcaster_spawner = RegisterEventHandler(
+        event_handler=OnProcessExit(
+            target_action=joint_state_broadcaster_spawner,
+            on_exit=[rviz_node],
+        )
+    )
+
     nodes_to_start = [
-        robot_state_publisher,
+        robot_state_publisher_node,
         control_node,
+        joint_state_broadcaster_spawner,
+        delay_robot_controller_spawner_after_joint_state_broadcaster_spawner,
         move_group_node,
-        rviz_node,
-    ] + controller_spawners
+        delay_rviz_after_joint_state_broadcaster_spawner,
+    ]
 
     return nodes_to_start
 

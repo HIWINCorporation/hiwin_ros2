@@ -13,7 +13,6 @@
     <xacro:arg name="use_fake_hardware" default="false" />
     <xacro:arg name="cabinet" default="gc2" />
     <xacro:arg name="robot_ip" default="0.0.0.0" />
-    <xacro:arg name="control_frequency" default="1000" />
 
     <xacro:property name="controller" value="$(arg cabinet)" />
     <xacro:property name="hardware_name" value="FakeSystem" />
@@ -36,8 +35,8 @@
             robot_ip="$(arg robot_ip)" />
     </xacro:if>
     <xacro:if value="${controller == 'ecat'}">
-        <xacro:ecat_ros2_control name="${hardware_name}" tf_prefix="$(arg tf_prefix)"
-            control_frequency="$(arg control_frequency)" />
+        <xacro:ecat_ros2_control name="${hardware_name}" ra_type="$(arg ra_type)"
+            tf_prefix="$(arg tf_prefix)" />
     </xacro:if>
 
 
