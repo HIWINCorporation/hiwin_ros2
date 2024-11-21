@@ -73,8 +73,6 @@ def launch_setup():
             "manipulator_controller",
             "-c",
             "/controller_manager",
-            "--controller-manager-timeout",
-            controller_spawner_timeout,
         ],
     )
 

@@ -63,8 +63,6 @@ def launch_setup():
             "joint_state_broadcaster",
             "--controller-manager",
             "/controller_manager",
-            "--controller-manager-timeout",
-            controller_spawner_timeout,
         ],
     )
 
@@ -75,8 +73,6 @@ def launch_setup():
             "manipulator_controller",
             "-c",
             "/controller_manager",
-            "--controller-manager-timeout",
-            controller_spawner_timeout,
         ],
     )
 
