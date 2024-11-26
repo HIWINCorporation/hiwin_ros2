@@ -6,7 +6,9 @@
 This repository provides the ROS2 stack for **HIWIN robots**, allowing integration with the ROS2 ecosystem for easy robot control and simulation.
 
 ## Contents
-Branch naming follows the ROS distribution they are compatible with. -devel branches may be unstable. Releases are made from the distribution branches (humble, iron).
+This repository follows branch naming aligned with ROS 2 distributions.
+- Stable branches: `humble`, `iron`
+- Development branches: `*-devel` (may be unstable)
 
 ## Features ##
 - **Integration with `ros2_control`:** Direct hardware interface via ROS 2 control for precise control and monitoring.
