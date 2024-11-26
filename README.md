@@ -1,48 +1,45 @@
-# HIWIN Robot
+# HIWIN Robot ROS2
 
 [![License - apache 2.0](https://img.shields.io/:license-Apache%202.0-yellowgreen.svg)](https://opensource.org/licenses/Apache-2.0)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-ROS2 stack for HIWIN robots.
+This repository provides the ROS2 stack for **HIWIN robots**, allowing integration with the ROS2 ecosystem for easy robot control and simulation.
 
-# Contents
+## Contents
 Branch naming follows the ROS distribution they are compatible with. -devel branches may be unstable. Releases are made from the distribution branches (humble, iron).
 
-# System Requirements
-### TBD.
+## Features ##
+- **Integration with `ros2_control`:** Direct hardware interface via ROS 2 control for precise control and monitoring.
+- **MoveIt 2 Integration:** Enables motion planning, trajectory execution, and manipulation tasks.
+- **Robot Drivers:** Built on top of the [hiwin_robot_client_library](https://github.com/HIWINCorporation/hiwin_robot_client_library) (currently under development) to support position control for HIWIN robots.
 
-# Install From Source
-### 1.Install requirements:
+:warning: **Known Limitations**:warning:
+The **hiwin_robot_client_library** is still under development. As a result:
+1. The library cannot handle rapid command sequences effectively.
+2. Execution times for physical robot movements are significantly longer than planned durations in trajectory commands.
+
+## Packages in the Repository:
+- `hiwin_driver` - Provides hardware interfaces for communication with HIWIN robots, including the implementation of dedicated controllers.
+- `hiwin_ra6_moveit_config` - MoveIt 2 configuration package for the RA6 series of HIWIN robots. Includes tools for integration with MoveIt 2 for motion planning and control.
+- `hiwin_rs4_moveit_config` - MoveIt 2 configuration package for the RS4 series of HIWIN robots. Includes tools for integration with MoveIt 2 for motion planning and control.
+
+## General Requirements
+- **Operating System:** Ubuntu 22.04 LTS
+- **ROS 2 version:** Humble Hawksbill
+
+## Getting Started
+1. **Install ros2 packages**
+Follow the steps outlined in the [ROS 2 Humble installation guide](https://docs.ros.org/en/humble/Installation.html).
+2. **Source the ROS 2 Environment**
 ```bash
-sudo apt install -y \
-ros-humble-ament-cmake \
-ros-humble-ament-cmake-clang-format \
-ros-humble-angles \
-ros-humble-ros2-controllers \
-ros-humble-ros2-control \
-ros-humble-ros2-control-test-assets \
-ros-humble-controller-manager \
-ros-humble-control-msgs \
-ros-humble-control-toolbox \
-ros-humble-generate-parameter-library \
-ros-humble-joint-state-publisher \
-ros-humble-joint-state-publisher-gui \
-ros-humble-moveit \
-ros-humble-pinocchio \
-ros-humble-realtime-tools \
-ros-humble-xacro \
-ros-humble-hardware-interface \
-ros-humble-ros-gz \
+source /opt/ros/humble/setup.bash
 ```
-
-### 2.Create a ROS 2 workspace:
+3. **Create a ROS 2 Workspace**
 ```bash
 mkdir -p ~/colcon_ws/src
 ```
-### 3.Clone repo and build packages:
+4. **Clone the Repository and Build**
 ```bash
-source /opt/ros/humble/setup.bash
-
 cd ~/colcon_ws
 
 git clone https://github.com/HIWINCorporation/hiwin_ros2.git src/hiwin_ros2
@@ -52,9 +49,26 @@ colcon build --symlink-install
 source install/setup.sh
 ```
 
-# Usage
-### Mock hardware
-The package can simulate hardware with the ``ros2_control``MockSystem. For more details see [ros2_control](https://control.ros.org/rolling/doc/ros2_control/hardware_interface/doc/mock_components_userdoc.html) documentation for more details.
+## Usage
+### :warning: **SAFETY FIRST**:warning:
+*It is strongly recommended to test your code in simulation before using it on physical hardware.*
+
+### Simulated hardware
+To test the robot in a simulated environment:
 ```bash
-ros2 launch hiwin_ra6_moveit_config ra6_moveit.launch.py ra_type:=ra610_1869
+ros2 launch hiwin_ra6_moveit_config ra6_moveit.launch.py ra_type:=ra605_710 use_fake_hardware:=true
+```
+
+### Real Robot Control
+To connect to and control a physical robot:
+```bash
+ros2 launch hiwin_ra6_moveit_config ra6_moveit.launch.py ra_type:=ra605_710 use_fake_hardware:=false robot_ip:=<robot ip>
+```
+### **HRSS Offline Simulation**  
+The **HIWIN Robot System Software (HRSS)** provides tools to control basic robot functions.  
+For offline simulation:
+1. Download [HRSS Offline](https://www.hiwinsupport.com/download_center.aspx?pid=MAR).
+2. Launch the robot simulation:
+```bash
+ros2 launch hiwin_ra6_moveit_config ra6_moveit.launch.py ra_type:=ra605_710 use_fake_hardware:=false robot_ip:=<workstation ip>
 ```
