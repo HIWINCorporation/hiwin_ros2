@@ -24,16 +24,18 @@ add_library(hiwin_driver_plugin SHARED
 target_compile_features(hiwin_driver_plugin PUBLIC
   c_std_99 
   cxx_std_17 # Require C99 and C++17
-) 
+)
+target_link_libraries(
+  hiwin_driver_plugin PUBLIC
+  hiwin_robot_client_library::hrsdk
+)
 target_include_directories(hiwin_driver_plugin PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>
 )
 ament_target_dependencies(hiwin_driver_plugin PUBLIC
   ${${PROJECT_NAME}_EXPORTED_TARGETS}
-  hardware_interface
-  hiwin_robot_client_library
-  rclcpp
+  ${THIS_PACKAGE_INCLUDE_DEPENDS}
 )
 
 pluginlib_export_plugin_description_file(hardware_interface hardware_interface_plugin.xml)
