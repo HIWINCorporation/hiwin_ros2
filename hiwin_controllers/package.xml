@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>hiwin_controllers</name>
+  <version>0.0.0</version>
+  <description>The hiwin_controllers package</description>
+  <maintainer email="hiwin_robot@hiwin.tw">HIWIN Technologies Corp</maintainer>
+  <license>Apache-2.0</license>
+
+  <url type="repository">https://github.com/HIWINCorporation/hiwin_ros2.git</url>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>controller_interface</depend>
+  <depend>generate_parameter_library</depend>
+  <depend>hiwin_msgs</depend>
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
