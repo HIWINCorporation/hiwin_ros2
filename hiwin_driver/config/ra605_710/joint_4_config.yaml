@@ -20,8 +20,6 @@ tpdo:  # TxPDO = transmit PDO Mapping
       - {index: 0x6061, sub_index: 0, type: int8}  # Mode of operation display
       - {index: 0x6064, sub_index: 0, type: int32, state_interface: position, factor: -4.4386018167987304100639108492244e-7}  # Position actual value 2π / (131072 * 108)
       - {index: 0x603f, sub_index: 0, type: uint16}  # Error code
-      - {index: 0x60f4, sub_index: 0, type: int32}  # Following error actual value
-      - {index: 0x60fd, sub_index: 0, type: uint32}  # Digital inputs
 
 rpdo:  # RxPDO = receive PDO Mapping
   - index: 0x1600
@@ -29,4 +27,3 @@ rpdo:  # RxPDO = receive PDO Mapping
       - {index: 0x6040, sub_index: 0, type: uint16, default: 0}  # Control word
       - {index: 0x6060, sub_index: 0, type: int8, default: 8}  # Mode of operation
       - {index: 0x607a, sub_index: 0, type: int32, command_interface: position, default: .nan, factor: -2252961.7237016177885891063243383}  # Target position
-      - {index: 0x60fe, sub_index: 1, type: uint32, default: 0}  # Digital Output Functionalities

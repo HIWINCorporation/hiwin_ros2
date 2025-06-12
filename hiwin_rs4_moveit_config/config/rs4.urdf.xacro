@@ -2,8 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="rs4">
 
     <xacro:arg name="tf_prefix" default="" />
-    <xacro:arg name="initial_positions_file"
-        default="$(find hiwin_rs4_moveit_config)/config/initial_positions.yaml" />
+    <xacro:arg name="initial_positions_file" default="$(find hiwin_rs4_moveit_config)/config/initial_positions.yaml" />
 
     <!-- Import rs4 urdf file -->
     <xacro:arg name="rs_type" default="rs4x" />
@@ -11,7 +10,7 @@
 
     <!-- Import control_xacro -->
     <xacro:arg name="use_fake_hardware" default="false" />
-    <xacro:arg name="cabinet" default="gc2" />
+    <xacro:arg name="cabinet" default="rc4-a" />
     <xacro:arg name="robot_ip" default="0.0.0.0" />
 
     <xacro:property name="controller" value="$(arg cabinet)" />
@@ -29,14 +28,10 @@
 
     <xacro:include filename="$(find hiwin_rs4_moveit_config)/config/${hardware_description_file}" />
     <xacro:if value="${controller == 'rc4-a'}">
-        <xacro:rs4_ros2_control name="${hardware_name}" tf_prefix="$(arg tf_prefix)"
-            initial_positions_file="$(arg initial_positions_file)"
-            use_fake_hardware="$(arg use_fake_hardware)"
-            robot_ip="$(arg robot_ip)" />
+        <xacro:rs4_ros2_control name="${hardware_name}" tf_prefix="$(arg tf_prefix)" initial_positions_file="$(arg initial_positions_file)" use_fake_hardware="$(arg use_fake_hardware)" robot_ip="$(arg robot_ip)" />
     </xacro:if>
     <xacro:if value="${controller == 'ecat'}">
-        <xacro:ecat_ros2_control name="${hardware_name}" rs_type="$(arg rs_type)"
-            tf_prefix="$(arg tf_prefix)" />
+        <xacro:ecat_ros2_control name="${hardware_name}" rs_type="$(arg rs_type)" tf_prefix="$(arg tf_prefix)" />
     </xacro:if>
 
 

@@ -2,8 +2,7 @@
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ra6">
 
     <xacro:arg name="tf_prefix" default="" />
-    <xacro:arg name="initial_positions_file"
-        default="$(find hiwin_ra6_moveit_config)/config/initial_positions.yaml" />
+    <xacro:arg name="initial_positions_file" default="$(find hiwin_ra6_moveit_config)/config/initial_positions.yaml" />
 
     <!-- Import ra6 urdf file -->
     <xacro:arg name="ra_type" default="ra6x" />
@@ -29,14 +28,10 @@
 
     <xacro:include filename="$(find hiwin_ra6_moveit_config)/config/${hardware_description_file}" />
     <xacro:if value="${controller == 'gc2'}">
-        <xacro:ra6_ros2_control name="${hardware_name}" tf_prefix="$(arg tf_prefix)"
-            initial_positions_file="$(arg initial_positions_file)"
-            use_fake_hardware="$(arg use_fake_hardware)"
-            robot_ip="$(arg robot_ip)" />
+        <xacro:ra6_ros2_control name="${hardware_name}" tf_prefix="$(arg tf_prefix)" initial_positions_file="$(arg initial_positions_file)" use_fake_hardware="$(arg use_fake_hardware)" robot_ip="$(arg robot_ip)" />
     </xacro:if>
     <xacro:if value="${controller == 'ecat'}">
-        <xacro:ecat_ros2_control name="${hardware_name}" ra_type="$(arg ra_type)"
-            tf_prefix="$(arg tf_prefix)" />
+        <xacro:ecat_ros2_control name="${hardware_name}" ra_type="$(arg ra_type)" tf_prefix="$(arg tf_prefix)" />
     </xacro:if>
 
 
