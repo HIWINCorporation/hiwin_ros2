@@ -1,9 +1,12 @@
 <library path="hiwin_driver_plugin">
-  <class name="hiwin_driver/HIWINPositionHardwareInterface"
-         type="hiwin_driver::HIWINPositionHardwareInterface"
-         base_class_type="hardware_interface::SystemInterface">
+  <class name="hiwin_driver/HIWINPositionHardwareInterface" type="hiwin_driver::HIWINPositionHardwareInterface" base_class_type="hardware_interface::SystemInterface">
     <description>
-		ROS2 Control System Driver for the HIWIN Robots series.
+		  Position control hardware interface for HIWIN robot arms using ROS 2 Control.
+    </description>
+  </class>
+  <class name="hiwin_driver/HIWINGPIOHardwareInterface" type="hiwin_driver::HIWINGPIOHardwareInterface" base_class_type="hardware_interface::SystemInterface">
+    <description>
+      GPIO control hardware interface for HIWIN robot arms using ROS 2 Control.
     </description>
   </class>
 </library>

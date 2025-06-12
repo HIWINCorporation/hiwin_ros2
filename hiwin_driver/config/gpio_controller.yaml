@@ -1,0 +1,30 @@
+gpio_controller:
+  ros__parameters:
+    type: hiwin_controllers/GPIOController
+    update_rate: 20  # Hz
+
+    gpios:
+      - system
+      - digital
+    command_interfaces:
+      system:
+        interfaces:
+          - watchdog
+          - reset_safety_rly
+          - reset_driver
+      digital:
+        interfaces:
+          - DO1
+    state_interfaces:
+      system:
+        interfaces:
+          - breaker
+          - e_stop
+          - e_stop2
+          - fan_error
+          - capacitor_error
+          - clear_error_notify
+          - shutdown_notify
+      digital:
+        interfaces:
+          - DI1

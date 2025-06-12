@@ -1,24 +1,18 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <xacro:macro name="ecat_ros2_control"
-    params="name rs_type tf_prefix">
+  <xacro:macro name="ecat_ros2_control" params="name rs_type tf_prefix">
 
-    <xacro:property name="joint_1_config"
-      value="$(find hiwin_driver)/config/${rs_type}/joint_1_config.yaml" />
-    <xacro:property name="joint_2_config"
-      value="$(find hiwin_driver)/config/${rs_type}/joint_2_config.yaml" />
-    <xacro:property name="joint_3_config"
-      value="$(find hiwin_driver)/config/${rs_type}/joint_3_config.yaml" />
-    <xacro:property name="joint_4_config"
-      value="$(find hiwin_driver)/config/${rs_type}/joint_4_config.yaml" />
+    <xacro:property name="joint_1_config" value="$(find hiwin_driver)/config/${rs_type}/joint_1_config.yaml" />
+    <xacro:property name="joint_2_config" value="$(find hiwin_driver)/config/${rs_type}/joint_2_config.yaml" />
+    <xacro:property name="joint_3_config" value="$(find hiwin_driver)/config/${rs_type}/joint_3_config.yaml" />
+    <xacro:property name="joint_4_config" value="$(find hiwin_driver)/config/${rs_type}/joint_4_config.yaml" />
 
-    <ros2_control name="ecat" type="system">
+    <ros2_control name="${name}" type="system">
       <hardware>
         <plugin>ethercat_driver/EthercatDriver</plugin>
         <param name="master_id">0</param>
-        <param name="control_frequency">1000</param>
+        <param name="control_frequency">500</param>
       </hardware>
-
       <joint name="${tf_prefix}joint_1">
         <command_interface name="position" />
         <state_interface name="position" />
@@ -67,7 +61,42 @@
           <param name="slave_config">${joint_4_config}</param>
         </ec_module>
       </joint>
+    </ros2_control>
 
+    <ros2_control name="GPIO" type="system">
+      <hardware>
+        <plugin>hiwin_driver/HIWINGPIOHardwareInterface</plugin>
+      </hardware>
+      <gpio name="system">
+        <command_interface name="watchdog" />
+        <command_interface name="reset_safety_rly" />
+        <command_interface name="reset_driver" />
+        <state_interface name="breaker" />
+        <state_interface name="e_stop" />
+        <state_interface name="e_stop2" />
+        <state_interface name="fan_error" />
+        <state_interface name="capacitor_error" />
+        <state_interface name="clear_error_notify" />
+        <state_interface name="shutdown_notify" />
+      </gpio>
+      <gpio name="digital">
+        <command_interface name="DO1" />
+        <command_interface name="DO2" />
+        <command_interface name="DO3" />
+        <command_interface name="DO4" />
+        <command_interface name="DO5" />
+        <command_interface name="DO6" />
+        <command_interface name="DO7" />
+        <command_interface name="DO8" />
+        <state_interface name="DI1" />
+        <state_interface name="DI2" />
+        <state_interface name="DI3" />
+        <state_interface name="DI4" />
+        <state_interface name="DI5" />
+        <state_interface name="DI6" />
+        <state_interface name="DI7" />
+        <state_interface name="DI8" />
+      </gpio>
     </ros2_control>
 
   </xacro:macro>

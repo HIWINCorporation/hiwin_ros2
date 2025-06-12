@@ -6,7 +6,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
-  hiwin_robot_client_library
   hardware_interface
   pluginlib
   rclcpp
@@ -18,16 +17,29 @@ foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
+find_package(hiwin_robot_client_library 0.0.3 REQUIRED)
+
 add_library(hiwin_driver_plugin SHARED
+  src/smbus_gpio_handler.cpp
+  src/serial_io_protocol.cpp
+  src/serial_io_handler.cpp
+  src/gpio_interface.cpp
   src/hardware_interface.cpp
 )
 target_compile_features(hiwin_driver_plugin PUBLIC
   c_std_99 
   cxx_std_17 # Require C99 and C++17
 )
+
+find_library(I2C_LIBRARY NAMES i2c)
+if(NOT I2C_LIBRARY)
+  message(FATAL_ERROR "Required i2c library not found. Make sure libi2c-dev is installed.")
+endif()
+
 target_link_libraries(
   hiwin_driver_plugin PUBLIC
   hiwin_robot_client_library::hrsdk
+  ${I2C_LIBRARY}
 )
 target_include_directories(hiwin_driver_plugin PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
