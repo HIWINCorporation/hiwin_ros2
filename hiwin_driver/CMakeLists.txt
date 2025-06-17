@@ -6,6 +6,7 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
+  hiwin_robot_client_library
   hardware_interface
   pluginlib
   rclcpp
@@ -17,7 +18,9 @@ foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
-find_package(hiwin_robot_client_library 0.0.3 REQUIRED)
+if (hiwin_robot_client_library_VERSION VERSION_LESS "0.0.4")
+  message(FATAL_ERROR "hiwin_robot_client_library version >= 0.0.4 is required. Found ${hiwin_robot_client_library_VERSION}")
+endif()
 
 add_library(hiwin_driver_plugin SHARED
   src/smbus_gpio_handler.cpp
