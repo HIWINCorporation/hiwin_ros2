@@ -163,6 +163,7 @@ def launch_setup():
         joint_state_broadcaster_spawner,
         robot_controller_after_jsb_spawner,
         rviz_after_joint_state_broadcaster_spawner,
+        gpio_controller_after_robot_controller_spawner,
     ]
 
     return nodes_to_start
@@ -205,7 +206,7 @@ def generate_launch_description():
     declared_arguments.append(
         DeclareLaunchArgument(
             "launch_rviz",
-            default_value="true",
+            default_value="false",
             description="Whether to launch RViz for visualization.",
         )
     )
