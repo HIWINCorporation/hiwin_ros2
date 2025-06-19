@@ -27,7 +27,7 @@ enum class SerialError
   READ_FAILED,
   HEADER_NOT_FOUND,
   FOOTER_NOT_FOUND,
-  PARSE_FAILED,
+  CHECKSUM_ERROR,
   TIMEOUT,
   DEVICE_DISCONNECTED,
 };
@@ -56,14 +56,7 @@ private:
   SerialError write_serial_output_locked();
   SerialError read_serial_output_locked();
   SerialError send_request(const std::vector<uint8_t>& package);
-  SerialError read_response(std::vector<uint8_t>& package);
-
-  // void get_input_request();
-  // bool parse_get_input(std::vector<uint8_t>& package, std::vector<uint8_t>& input);
-  // void set_output_request(std::vector<uint8_t> output);
-  // bool parse_set_output(std::vector<uint8_t>& package);
-  // void get_output_request();
-  // bool parse_get_output(std::vector<uint8_t>& package, std::vector<uint8_t>& output);
+  SerialError read_response(std::vector<uint8_t>& package, int payload_length);
 
   int fd_;
   bool initialized_;

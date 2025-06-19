@@ -172,10 +172,10 @@ HIWINGPIOHardwareInterface::on_configure(const rclcpp_lifecycle::State& previous
 
   smbus_gpio_ = std::make_shared<SMBusGPIOHandler>();
 
-  digital_io_protocol_ = std::make_shared<DigitalIOProtocol>();
+  digital_io_protocol_ = std::make_shared<DigitalIOProtocol>(4, 4);
   digital_io_ = std::make_shared<SerialIOHandler>(digital_io_protocol_);
 
-  robot_io_protocol_ = std::make_shared<RobotIOProtocol>();
+  robot_io_protocol_ = std::make_shared<RobotIOProtocol>(2, 3);
   robot_io_ = std::make_shared<SerialIOHandler>(robot_io_protocol_);
 
   smbus_gpio_->init("/dev/i2c-0", 0x20);
@@ -308,7 +308,10 @@ void HIWINGPIOHardwareInterface::polling_loop()
     {
       std::lock_guard<std::mutex> lock(gpio_mutex_);
       smbus_gpio_->set_output_group(0, gpio_out_cache_.at(0));
-      digital_io_->set_output_group(0, digital_out_cache_.at(0));
+      for (int i = 0; i < digital_out_cache_.size(); i++)
+      {
+        digital_io_->set_output_group(i, digital_out_cache_.at(i));
+      }
     }
 
     for (auto& h : handlers)
@@ -319,7 +322,10 @@ void HIWINGPIOHardwareInterface::polling_loop()
     {
       std::lock_guard<std::mutex> lock(gpio_mutex_);
       smbus_gpio_->get_input_group(0, gpio_in_cache_.at(0));
-      digital_io_->get_input_group(0, digital_in_cache_.at(0));
+      for (int i = 0; i < digital_in_cache_.size(); i++)
+      {
+        digital_io_->get_input_group(i, digital_in_cache_.at(i));
+      }
     }
 
     rate.sleep();

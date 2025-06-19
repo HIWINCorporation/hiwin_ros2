@@ -6,6 +6,7 @@ find_package(rosidl_default_generators REQUIRED)
 
 set(msg_files
   msg/SystemIOStates.msg
+  msg/DigitalIOStates.msg
 )
 
 set(srv_files

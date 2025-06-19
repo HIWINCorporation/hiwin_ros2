@@ -216,7 +216,7 @@ SerialError SerialIOHandler::read_serial_input_locked()
     std::this_thread::sleep_for(std::chrono::milliseconds(interval_ms));
 
     std::vector<uint8_t> package;
-    SerialError err = read_response(package);
+    SerialError err = read_response(package, protocol_->input_data_byte_length());
     if (err == SerialError::OK)
     {
       std::vector<uint8_t> parsed_input;
@@ -232,7 +232,7 @@ SerialError SerialIOHandler::read_serial_input_locked()
       }
       else
       {
-        return SerialError::PARSE_FAILED;
+        return SerialError::READ_FAILED;
       }
     }
     else if (err != SerialError::FOOTER_NOT_FOUND)
@@ -271,7 +271,7 @@ SerialError SerialIOHandler::write_serial_output_locked()
   while (elapsed < timeout_ms)
   {
     std::this_thread::sleep_for(std::chrono::milliseconds(interval_ms));
-    SerialError err = read_response(package);
+    SerialError err = read_response(package, 2);
 
     if (err == SerialError::OK)
     {
@@ -281,7 +281,7 @@ SerialError SerialIOHandler::write_serial_output_locked()
       }
       else
       {
-        return SerialError::PARSE_FAILED;
+        return SerialError::WRITE_FAILED;
       }
     }
     else if (err != SerialError::FOOTER_NOT_FOUND)
@@ -308,7 +308,7 @@ SerialError SerialIOHandler::read_serial_output_locked()
     std::this_thread::sleep_for(std::chrono::milliseconds(interval_ms));
 
     std::vector<uint8_t> package;
-    SerialError err = read_response(package);
+    SerialError err = read_response(package, protocol_->output_data_byte_length());
     if (err == SerialError::OK)
     {
       std::vector<uint8_t> parsed_output;
@@ -324,7 +324,7 @@ SerialError SerialIOHandler::read_serial_output_locked()
       }
       else
       {
-        return SerialError::PARSE_FAILED;
+        return SerialError::WRITE_FAILED;
       }
     }
     else if (err != SerialError::FOOTER_NOT_FOUND)
@@ -364,10 +364,21 @@ SerialError SerialIOHandler::send_request(const std::vector<uint8_t>& package)
   return SerialError::OK;
 }
 
-SerialError SerialIOHandler::read_response(std::vector<uint8_t>& package)
+SerialError SerialIOHandler::read_response(std::vector<uint8_t>& package, int payload_length)
 {
+  /*
+   * byte[0]       = 0xFA (Header)
+   * byte[1]       = Command
+   * byte[2...N+1] = Payload
+   * byte[N+2]     = Checksum
+   * byte[N+3]     = 0xFE(Footer)
+   *
+   * packet_length = 1 (header) + 1 (cmd) + payload_length + 1 (checksum) + 1 (footer)
+   */
+
   uint8_t temp_buffer[256];
   ssize_t bytes_read = read(fd_, temp_buffer, sizeof(temp_buffer));
+  const size_t expected_packet_length = 1 + 1 + payload_length + 1 + 1;
 
   if (bytes_read == -1)
   {
@@ -397,21 +408,42 @@ SerialError SerialIOHandler::read_response(std::vector<uint8_t>& package)
 
   receive_buffer_.insert(receive_buffer_.end(), temp_buffer, temp_buffer + bytes_read);
 
-  auto start_it = std::find(receive_buffer_.begin(), receive_buffer_.end(), 0xFA);
-  if (start_it == receive_buffer_.end())
+  auto header_it = std::find(receive_buffer_.begin(), receive_buffer_.end(), 0xFA);
+  if (header_it == receive_buffer_.end())
   {
     receive_buffer_.clear();
     return SerialError::HEADER_NOT_FOUND;
   }
 
-  auto end_it = std::find(start_it, receive_buffer_.end(), 0xFE);
-  if (end_it == receive_buffer_.end())
+  if (std::distance(header_it, receive_buffer_.end()) < static_cast<ssize_t>(expected_packet_length))
   {
     return SerialError::FOOTER_NOT_FOUND;
   }
 
-  package.assign(start_it, end_it + 1);
-  receive_buffer_.erase(receive_buffer_.begin(), end_it + 1);
+  auto footer_it = header_it + expected_packet_length - 1;
+  if (*footer_it != 0xFE)
+  {
+    receive_buffer_.erase(receive_buffer_.begin(), header_it + 1);
+    return SerialError::FOOTER_NOT_FOUND;
+  }
+
+  uint8_t checksum = 0;
+  for (auto it = header_it + 2; it < footer_it - 1; ++it)
+    checksum += *it;
+  if (checksum != *(footer_it - 1))
+  {
+    receive_buffer_.erase(receive_buffer_.begin(), footer_it + 1);
+    return SerialError::CHECKSUM_ERROR;
+  }
+
+  package.assign(header_it, footer_it + 1);
+
+  std::stringstream ss;
+  for (const auto& byte : package)
+    ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(byte) << " ";
+  RCLCPP_DEBUG(rclcpp::get_logger("SerialIOHandler"), "%s", ss.str().c_str());
+
+  receive_buffer_.erase(receive_buffer_.begin(), footer_it + 1);
 
   return SerialError::OK;
 }

@@ -23,6 +23,7 @@
 
 #include "hiwin_controllers/gpio_controller_parameters.hpp"
 #include "hiwin_msgs/msg/system_io_states.hpp"
+#include "hiwin_msgs/msg/digital_io_states.hpp"
 #include "hiwin_msgs/srv/set_io.hpp"
 
 namespace hiwin_controllers
@@ -56,8 +57,10 @@ private:
   rclcpp::Service<hiwin_msgs::srv::SetIO>::SharedPtr set_io_srv_;
 
   std::shared_ptr<rclcpp::Publisher<hiwin_msgs::msg::SystemIOStates>> system_io_pub_;
+  std::shared_ptr<rclcpp::Publisher<hiwin_msgs::msg::DigitalIOStates>> digital_io_pub_;
 
   hiwin_msgs::msg::SystemIOStates system_io_msg_;
+  hiwin_msgs::msg::DigitalIOStates digital_io_msg_;
 
   std::vector<std::string> command_interface_names_;
   std::vector<std::string> state_interface_names_;
@@ -69,7 +72,7 @@ private:
   bool watchdog_output_state_ = false;
   std::optional<std::reference_wrapper<hardware_interface::LoanedCommandInterface>> watchdog_iface_;
 
-  std::unordered_map<std::string, std::function<void(double)>> state_setters_;
+  std::unordered_map<std::string, std::function<void(bool)>> cabinet_signal_setters_;
   std::unordered_map<std::string, std::reference_wrapper<hardware_interface::LoanedCommandInterface>> command_map_;
 
   std::unordered_map<std::string, rclcpp::Time> pulse_expirations_;

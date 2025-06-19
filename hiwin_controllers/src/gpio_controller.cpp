@@ -98,6 +98,17 @@ controller_interface::CallbackReturn GPIOController::on_activate(const rclcpp_li
 
   try
   {
+    digital_io_pub_ = get_node()->create_publisher<hiwin_msgs::msg::DigitalIOStates>("~/digital_io_states",
+                                                                                     rclcpp::SystemDefaultsQoS());
+  }
+  catch (const std::exception& e)
+  {
+    RCLCPP_ERROR(logger, "Failed to create digital_io_states publisher: %s", e.what());
+    return CallbackReturn::ERROR;
+  }
+
+  try
+  {
     set_io_srv_ = get_node()->create_service<hiwin_msgs::srv::SetIO>(
         "~/set_io",
         std::bind(&GPIOController::handle_set_gpio_command, this, std::placeholders::_1, std::placeholders::_2));
@@ -149,17 +160,36 @@ controller_interface::return_type GPIOController::update(const rclcpp::Time& tim
   }
 
   // Read state interfaces and update internal message
+  std::vector<std::string> di_names;
+  std::vector<bool> di_values;
+
   for (auto& iface : state_interfaces_)
   {
-    auto it = state_setters_.find(iface.get_name());
-    if (it != state_setters_.end())
+    const std::string& full_name = iface.get_name();
+    const double value = iface.get_value();
+
+    auto it = cabinet_signal_setters_.find(full_name);
+    if (it != cabinet_signal_setters_.end())
     {
-      it->second(iface.get_value());
+      it->second(static_cast<bool>(value));
+      continue;
+    }
+
+    if (full_name.rfind("digital/", 0) == 0)
+    {
+      std::string name = full_name.substr(std::string("digital/").length());
+      di_names.push_back(name);
+      di_values.push_back(!static_cast<bool>(value));
     }
   }
 
   system_io_msg_.stamp = now;
   system_io_pub_->publish(system_io_msg_);
+
+  digital_io_msg_.stamp = now;
+  digital_io_msg_.di_names = di_names;
+  digital_io_msg_.di_values = di_values;
+  digital_io_pub_->publish(digital_io_msg_);
 
   // Handle pulse expiration (auto-reset outputs)
   for (auto it = pulse_expirations_.begin(); it != pulse_expirations_.end();)
@@ -209,14 +239,14 @@ void GPIOController::handle_set_gpio_command(const std::shared_ptr<hiwin_msgs::s
 
 void GPIOController::setup_state_interface_map()
 {
-  state_setters_ = {
-    { "system/breaker", [&](double val) { system_io_msg_.breaker = static_cast<bool>(val); } },
-    { "system/e_stop", [&](double val) { system_io_msg_.e_stop = static_cast<bool>(val); } },
-    { "system/e_stop2", [&](double val) { system_io_msg_.e_stop2 = static_cast<bool>(val); } },
-    { "system/fan_error", [&](double val) { system_io_msg_.fan_error = static_cast<bool>(val); } },
-    { "system/capacitor_error", [&](double val) { system_io_msg_.capacitor_error = static_cast<bool>(val); } },
-    { "system/clear_error_notify", [&](double val) { system_io_msg_.clear_error_notify = static_cast<bool>(val); } },
-    { "system/shutdown_notify", [&](double val) { system_io_msg_.shutdown_notify = static_cast<bool>(val); } },
+  cabinet_signal_setters_ = {
+    { "system/breaker", [&](bool state) { system_io_msg_.breaker = state; } },
+    { "system/e_stop", [&](bool state) { system_io_msg_.e_stop = state; } },
+    { "system/e_stop2", [&](bool state) { system_io_msg_.e_stop2 = state; } },
+    { "system/fan_error", [&](bool state) { system_io_msg_.fan_error = state; } },
+    { "system/capacitor_error", [&](bool state) { system_io_msg_.capacitor_error = state; } },
+    { "system/clear_error_notify", [&](bool state) { system_io_msg_.clear_error_notify = state; } },
+    { "system/shutdown_notify", [&](bool state) { system_io_msg_.shutdown_notify = state; } },
   };
 }
 

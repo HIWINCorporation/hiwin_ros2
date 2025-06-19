@@ -80,22 +80,38 @@
         <state_interface name="shutdown_notify" />
       </gpio>
       <gpio name="digital">
-        <command_interface name="DO1" />
-        <command_interface name="DO2" />
-        <command_interface name="DO3" />
-        <command_interface name="DO4" />
-        <command_interface name="DO5" />
-        <command_interface name="DO6" />
-        <command_interface name="DO7" />
-        <command_interface name="DO8" />
-        <state_interface name="DI1" />
-        <state_interface name="DI2" />
-        <state_interface name="DI3" />
-        <state_interface name="DI4" />
-        <state_interface name="DI5" />
-        <state_interface name="DI6" />
-        <state_interface name="DI7" />
-        <state_interface name="DI8" />
+        <command_interface name="DO1_1" />
+        <command_interface name="DO1_2" />
+        <command_interface name="DO1_3" />
+        <command_interface name="DO1_4" />
+        <command_interface name="DO1_5" />
+        <command_interface name="DO1_6" />
+        <command_interface name="DO1_7" />
+        <command_interface name="DO1_8" />
+        <command_interface name="DO2_1" />
+        <command_interface name="DO2_2" />
+        <command_interface name="DO2_3" />
+        <command_interface name="DO2_4" />
+        <command_interface name="DO2_5" />
+        <command_interface name="DO2_6" />
+        <command_interface name="DO2_7" />
+        <command_interface name="DO2_8" />
+        <state_interface name="DI1_1" />
+        <state_interface name="DI1_2" />
+        <state_interface name="DI1_3" />
+        <state_interface name="DI1_4" />
+        <state_interface name="DI1_5" />
+        <state_interface name="DI1_6" />
+        <state_interface name="DI1_7" />
+        <state_interface name="DI1_8" />
+        <state_interface name="DI2_1" />
+        <state_interface name="DI2_2" />
+        <state_interface name="DI2_3" />
+        <state_interface name="DI2_4" />
+        <state_interface name="DI2_5" />
+        <state_interface name="DI2_6" />
+        <state_interface name="DI2_7" />
+        <state_interface name="DI2_8" />
       </gpio>
     </ros2_control>
 

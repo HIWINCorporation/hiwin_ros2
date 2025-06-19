@@ -33,19 +33,6 @@ bool DigitalIOProtocol::parse_get_input(const std::vector<uint8_t>& package, std
    *   0xFA   |  0x56   |  Data1  |  Data2  |  Data3  |  Data4  |   SUM   |  0xFE
    */
 
-  if (package.size() != 8)
-  {
-    RCLCPP_DEBUG(rclcpp::get_logger("DigitalIO"), "Invalid input response length");
-    return false;
-  }
-
-  uint8_t checksum = package[2] + package[3] + package[4] + package[5];
-  if (checksum != package[6])
-  {
-    RCLCPP_DEBUG(rclcpp::get_logger("DigitalIO"), "Checksum error in input response");
-    return false;
-  }
-
   input.push_back(package[2]);
   input.push_back(package[3]);
   input.push_back(package[4]);
@@ -78,18 +65,8 @@ bool DigitalIOProtocol::parse_set_output(const std::vector<uint8_t>& package) co
    *  [0xFA][0xFD][0x00][0xAA][0xAA][0xFE]
    */
 
-  if (package.size() != 6)
-  {
-    RCLCPP_DEBUG(rclcpp::get_logger("DigitalIO"), "Invalid output response length");
+  if (package[2] != 0x0F && package[3] != 0x55)
     return false;
-  }
-
-  uint8_t checksum = package[2] + package[3];
-  if (checksum != package[4])
-  {
-    RCLCPP_DEBUG(rclcpp::get_logger("DigitalIO"), "Checksum error in input response");
-    return false;
-  }
 
   return true;
 }
@@ -107,19 +84,6 @@ bool DigitalIOProtocol::parse_get_output(const std::vector<uint8_t>& package, st
    *  byte[0] | byte[1] | byte[2] | byte[3] | byte[4] | byte[5] | byte[6] | byte[7]
    *   0xFA   |  0xFD   |  Data1  |  Data2  |  Data3  |  Data4  |   SUM   |  0xFE
    */
-
-  if (package.size() != 8)
-  {
-    RCLCPP_DEBUG(rclcpp::get_logger("DigitalIO"), "Invalid output response length");
-    return false;
-  }
-
-  uint8_t checksum = package[2] + package[3] + package[4] + package[5];
-  if (checksum != package[6])
-  {
-    RCLCPP_DEBUG(rclcpp::get_logger("DigitalIO"), "Checksum error in input response");
-    return false;
-  }
 
   output.push_back(package[2]);
   output.push_back(package[3]);
@@ -147,19 +111,6 @@ bool RobotIOProtocol::parse_get_input(const std::vector<uint8_t>& package, std::
    * Data2 = [1, 0, X, X, RI8, RI7, RI6, RI5]
    * checksum = Data1 + Data2
    */
-
-  if (package.size() != 6)
-  {
-    RCLCPP_DEBUG(rclcpp::get_logger("RobotIO"), "Invalid input response length");
-    return false;
-  }
-
-  uint8_t checksum = package[2] + package[3];
-  if (checksum != package[4])
-  {
-    RCLCPP_DEBUG(rclcpp::get_logger("RobotIO"), "Checksum error in input response");
-    return false;
-  }
 
   input.push_back(package[2]);
   input.push_back(package[3]);
@@ -191,18 +142,8 @@ bool RobotIOProtocol::parse_set_output(const std::vector<uint8_t>& package) cons
    *  [0xFA][0xFD][0x00][0xAA][0xAA][0xFE]
    */
 
-  if (package.size() != 6)
-  {
-    RCLCPP_DEBUG(rclcpp::get_logger("RobotIO"), "Invalid output response length");
+  if (package[2] != 0x0F && package[3] != 0x55)
     return false;
-  }
-
-  uint8_t checksum = package[2] + package[3];
-  if (checksum != package[4])
-  {
-    RCLCPP_DEBUG(rclcpp::get_logger("RobotIO"), "Checksum error in input response");
-    return false;
-  }
 
   return true;
 }
@@ -223,19 +164,6 @@ bool RobotIOProtocol::parse_get_output(const std::vector<uint8_t>& package, std:
    * Data3 = [1, 0, X, X, RO8, RO7, RO6, RO5]
    * checksum = Data1 + Data2 + Data3
    */
-
-  if (package.size() != 7)
-  {
-    RCLCPP_DEBUG(rclcpp::get_logger("RobotIO"), "Invalid output response length");
-    return false;
-  }
-
-  uint8_t checksum = package[2] + package[3] + package[4];
-  if (checksum != package[5])
-  {
-    RCLCPP_DEBUG(rclcpp::get_logger("RobotIO"), "Checksum error in input response");
-    return false;
-  }
 
   output.push_back(package[2]);
   output.push_back(package[3]);

@@ -14,7 +14,15 @@ gpio_controller:
           - reset_driver
       digital:
         interfaces:
-          - DO1
+          - DO1_1
+          - DO1_2
+          - DO1_3
+          - DO1_4
+          - DO1_5
+          - DO1_6
+          - DO1_7
+          - DO1_8
+          - DO2_1
     state_interfaces:
       system:
         interfaces:
@@ -27,4 +35,12 @@ gpio_controller:
           - shutdown_notify
       digital:
         interfaces:
-          - DI1
+          - DI1_1
+          - DI1_2
+          - DI1_3
+          - DI1_4
+          - DI1_5
+          - DI1_6
+          - DI1_7
+          - DI1_8
+          - DI2_1
